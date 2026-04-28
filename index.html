@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, shrink-to-fit=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>Уни-карты</title>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <style>
@@ -102,6 +102,55 @@
       transform: translate(-50%, -50%) scale(1.02);
       box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
     }
+
+
+/* ========== ФОРМЫ ЭЛЕМЕНТОВ ========== */
+/* Форма 1: Прямоугольник */
+.node.shape-rect {
+  border-radius: 0px;
+}
+
+/* Форма 2: Скруглённый прямоугольник */
+.node.shape-rounded {
+  border-radius: 16px;
+}
+
+/* Форма 3: Оригинальная (Анкара) */
+.node.shape-ankara {
+  border-radius: 28px 12px 28px 12px;
+}
+
+/* ========== КНОПКИ ВЫБОРА ФОРМЫ ========== */
+.shape-preview {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--neutral-500);
+  background: var(--neutral-100);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+.shape-preview.active {
+  border-color: var(--neutral-800);
+  background: var(--neutral-50);
+  box-shadow: 0 0 0 2px var(--neutral-700);
+  transform: scale(1.05);
+}
+.shape-preview-rect {
+  border-radius: 0px;
+}
+.shape-preview-rounded {
+  border-radius: 12px;
+}
+.shape-preview-ankara {
+  border-radius: 20px 8px 20px 8px;
+}
+
+
+
 
     .node .resize-handle {
       position: absolute;
@@ -375,33 +424,6 @@
       min-width: 45px;
       text-align: center;
     }
-
-/* ========== ИСПРАВЛЕНИЯ ДЛЯ iOS (iPhone) ========== */
-/* Гарантированная высота карты */
-.map-shell {
-  height: 100%;
-  min-height: 100%;
-  position: relative;
-}
-
-/* Для flex-контейнера, чтобы правильно работала высота на iOS */
-.flex-1 {
-  display: flex;
-  flex-direction: column;
-  min-height: 0; /* Ключевое свойство для iOS Safari */
-}
-
-main {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-/* Убираем возможные проблемы с touch events */
-.map-shell {
-  touch-action: none;
-  -webkit-tap-highlight-color: transparent;
-}
   </style>
 </head>
 <body>
@@ -431,6 +453,32 @@ main {
 
     <div class="mt-5 border-t border-[#D4D4D4] pt-4">
       <p class="text-sm font-medium text-[#404040]">✔️ Выбран элемент: <span id="selectedName" class="font-semibold">нет</span></p>
+
+
+<!-- ========== ВЫБОР ФОРМЫ ЭЛЕМЕНТА ========== -->
+<div id="shapeSelectorBlock" class="mt-3" style="display: none;">
+  <label class="block text-sm font-medium text-[#404040] mb-2">🦅 Выберите форму элемента</label>
+  <div class="flex gap-3 items-center">
+    <button type="button" class="shape-preview shape-preview-rect" data-shape="rect" title="Прямоугольник">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="5" width="18" height="14" rx="0" />
+      </svg>
+    </button>
+    <button type="button" class="shape-preview shape-preview-rounded" data-shape="rounded" title="Скруглённый">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="5" width="18" height="14" rx="6" />
+      </svg>
+    </button>
+    <button type="button" class="shape-preview shape-preview-ankara" data-shape="ankara" title="Оригинальная">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M5,8 Q12,4 19,8 Q21,12 19,16 Q12,20 5,16 Q3,12 5,8Z" />
+      </svg>
+    </button>
+  </div>
+</div>
+
+
+
 
       <label class="block mt-3 text-sm font-medium text-[#404040]">💡 Добавить подэлемент</label>
       <div class="mt-1 flex gap-2">
@@ -556,6 +604,288 @@ function savePalette() {
   localStorage.setItem('ankara_palette', JSON.stringify(userPalette));
 }
 
+// ======================== СОХРАНЕНИЕ И ЗАГРУЗКА КАРТЫ ========================
+
+// Сохранение всей карты в localStorage
+function saveMapToLocalStorage() {
+  try {
+    const mapData = {
+      nodes: [],
+      rootId: state.rootId,
+      idCounter: state.idCounter,
+      panX: state.panX,
+      panY: state.panY,
+      scale: state.scale,
+      userPalette: userPalette,
+      version: "1.0"
+    };
+    
+    state.nodes.forEach(node => {
+      mapData.nodes.push({
+        id: node.id,
+        text: node.text,
+        parentId: node.parentId,
+        children: node.children,
+        x: node.x,
+        y: node.y,
+        color: node.color,
+        width: node.width,
+        height: node.height,
+        isPlainText: node.isPlainText,
+        fontSize: node.fontSize,
+        shape: node.shape
+      });
+    });
+    
+    localStorage.setItem('uni_map_autosave', JSON.stringify(mapData));
+    setStatus("💾 Карта автоматически сохранена");
+  } catch(e) {
+    console.error("Ошибка сохранения:", e);
+  }
+}
+
+// Загрузка карты из localStorage
+function loadMapFromLocalStorage() {
+  const saved = localStorage.getItem('uni_map_autosave');
+  if (!saved) return false;
+  
+  try {
+    const mapData = JSON.parse(saved);
+    if (!mapData.nodes || !mapData.nodes.length) return false;
+    
+    // Очищаем текущую карту
+    clearMapData();
+    
+    // Восстанавливаем палитру
+    if (mapData.userPalette) {
+      userPalette = mapData.userPalette;
+      savePalette();
+    }
+    
+    // Восстанавливаем узлы
+    const nodeMap = new Map();
+    mapData.nodes.forEach(nodeData => {
+      const node = {
+        ...nodeData,
+        children: nodeData.children || []
+      };
+      state.nodes.set(nodeData.id, node);
+      nodeMap.set(nodeData.id, node);
+    });
+    
+    // Восстанавливаем связи между узлами
+    state.nodes.forEach(node => {
+      if (node.parentId && nodeMap.has(node.parentId)) {
+        const parent = state.nodes.get(node.parentId);
+        if (!parent.children.includes(node.id)) {
+          parent.children.push(node.id);
+        }
+      }
+    });
+    
+    // Восстанавливаем остальное состояние
+    state.rootId = mapData.rootId;
+    state.idCounter = mapData.idCounter;
+    state.panX = mapData.panX;
+    state.panY = mapData.panY;
+    state.scale = mapData.scale;
+    
+    renderPalette();
+    render();
+    updateTransform();
+    setStatus("🔄 Карта восстановлена из автосохранения");
+    return true;
+  } catch(e) {
+    console.error("Ошибка загрузки:", e);
+    return false;
+  }
+}
+
+// Автосохранение (вызывается при любом изменении)
+function autoSave() {
+  saveMapToLocalStorage();
+}
+
+// Экспорт карты в JSON файл
+function exportMapToJSON() {
+  try {
+    const mapData = {
+      nodes: [],
+      rootId: state.rootId,
+      idCounter: state.idCounter,
+      panX: state.panX,
+      panY: state.panY,
+      scale: state.scale,
+      userPalette: userPalette,
+      exportDate: new Date().toISOString(),
+      version: "1.0"
+    };
+    
+    state.nodes.forEach(node => {
+      mapData.nodes.push({
+        id: node.id,
+        text: node.text,
+        parentId: node.parentId,
+        children: node.children,
+        x: node.x,
+        y: node.y,
+        color: node.color,
+        width: node.width,
+        height: node.height,
+        isPlainText: node.isPlainText,
+        fontSize: node.fontSize,
+        shape: node.shape
+      });
+    });
+    
+    const jsonStr = JSON.stringify(mapData, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `uni_map_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    setStatus("📁 Карта экспортирована в JSON файл");
+  } catch(e) {
+    setStatus("❌ Ошибка экспорта: " + e.message, true);
+  }
+}
+
+// Импорт карты из JSON файла (исправленная версия)
+function importMapFromJSON(file) {
+  console.log("📂 Начинаем импорт файла:", file.name);
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      console.log("📄 Файл прочитан, парсим JSON...");
+      const mapData = JSON.parse(e.target.result);
+      console.log("✅ JSON распарсен:", mapData);
+      
+      if (!mapData.nodes || !mapData.nodes.length) {
+        throw new Error("Неверный формат файла: нет узлов");
+      }
+      
+      console.log("🔄 Очищаем текущую карту...");
+      clearMapData();
+      
+      if (mapData.userPalette) {
+        console.log("🎨 Восстанавливаем палитру");
+        userPalette = mapData.userPalette;
+        savePalette();
+        renderPalette();
+      }
+      
+      console.log("📦 Восстанавливаем узлы...");
+      const nodeMap = new Map();
+      mapData.nodes.forEach(nodeData => {
+        const node = {
+          ...nodeData,
+          children: nodeData.children || []
+        };
+        state.nodes.set(nodeData.id, node);
+        nodeMap.set(nodeData.id, node);
+        console.log("  - Узел восстановлен:", nodeData.id, nodeData.text);
+      });
+      
+      console.log("🔗 Восстанавливаем связи между узлами...");
+      state.nodes.forEach(node => {
+        if (node.parentId && nodeMap.has(node.parentId)) {
+          const parent = state.nodes.get(node.parentId);
+          if (!parent.children.includes(node.id)) {
+            parent.children.push(node.id);
+          }
+        }
+      });
+      
+      state.rootId = mapData.rootId;
+      state.idCounter = mapData.idCounter || state.idCounter;
+      state.panX = mapData.panX || 0;
+      state.panY = mapData.panY || 0;
+      state.scale = mapData.scale || 1;
+      
+      console.log("🖌️ Перерисовываем карту...");
+      renderPalette();
+      render();
+      updateTransform();
+      
+      setStatus("✅ Карта успешно импортирована из JSON файла!");
+      console.log("🎉 Импорт завершён успешно!");
+      
+    } catch(err) {
+      console.error("❌ Ошибка импорта:", err);
+      setStatus("❌ Ошибка импорта: " + err.message, true);
+      alert("Не удалось загрузить файл. Проверьте, что это правильный JSON файл карты.");
+    }
+  };
+  
+  reader.onerror = function() {
+    console.error("❌ Ошибка чтения файла");
+    setStatus("❌ Ошибка чтения файла", true);
+    alert("Не удалось прочитать файл");
+  };
+  
+  reader.readAsText(file);
+}
+
+
+
+
+// Создание кнопок сохранения/загрузки в интерфейсе (исправленная версия)
+function addSaveLoadButtons() {
+  const panel = document.querySelector('.panel');
+  if (!panel) return;
+  
+  const existingDiv = document.getElementById('saveLoadContainer');
+  if (existingDiv) existingDiv.remove();
+  
+  const container = document.createElement('div');
+  container.id = 'saveLoadContainer';
+  container.className = 'mt-5 border-t border-[#D4D4D4] pt-4';
+  container.innerHTML = `
+    <p class="text-sm font-medium text-[#404040] mb-2">💾 Сохранение карты</p>
+    <div class="flex flex-wrap gap-2">
+      <button id="saveJsonBtn" class="rounded-full bg-[#525252] px-3 py-1.5 text-xs text-white hover:bg-[#404040] cursor-pointer">
+        📁 Сохранить как JSON
+      </button>
+      <button id="loadJsonBtn" class="rounded-full bg-[#A3A3A3] px-3 py-1.5 text-xs text-white hover:bg-[#737373] cursor-pointer">
+        📂 Загрузить JSON
+      </button>
+    </div>
+    <input type="file" id="hiddenFileInput" accept=".json" style="display: none;" />
+    <p class="text-xs text-[#737373] mt-2">💰 Карта автоматически сохраняется в браузере. JSON файл можно переносить между устройствами.</p>
+  `;
+  
+  panel.appendChild(container);
+  
+  // Кнопка сохранения
+  const saveBtn = document.getElementById('saveJsonBtn');
+  if (saveBtn) {
+    saveBtn.addEventListener('click', () => exportMapToJSON());
+  }
+  
+  // Кнопка загрузки — отдельная кнопка + скрытый input
+  const loadBtn = document.getElementById('loadJsonBtn');
+  const hiddenInput = document.getElementById('hiddenFileInput');
+  
+  if (loadBtn && hiddenInput) {
+    loadBtn.addEventListener('click', () => {
+      hiddenInput.click();
+    });
+    
+    hiddenInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        importMapFromJSON(e.target.files[0]);
+      }
+      hiddenInput.value = '';
+    });
+  }
+}
+
+
+
+
 // ======================== ВСЕ ПЕРЕМЕННЫЕ ========================
 const sourceInput = document.getElementById("sourceInput");
 const buildStructuredBtn = document.getElementById("buildStructured");
@@ -587,6 +917,8 @@ const guideX = document.getElementById("guideX");
 const guideY = document.getElementById("guideY");
 const snapOff = document.getElementById("snapOff");
 const resetPaletteBtn = document.getElementById("resetPaletteBtn");
+const shapeSelectorBlock = document.getElementById("shapeSelectorBlock");
+
 
 const SNAP_DISTANCE = 10;
 
@@ -659,7 +991,44 @@ function getDefaultColor() {
   return firstColor || "#E8E8E8";
 }
 
-function createNode(text, parentId = null, x = 0, y = 0, color = null, isPlainText = false) {
+
+// ========== ФУНКЦИИ ДЛЯ РАБОТЫ С ФОРМОЙ ЭЛЕМЕНТА ==========
+function getShapeClass(shapeType) {
+  switch(shapeType) {
+    case 'rect': return 'shape-rect';
+    case 'rounded': return 'shape-rounded';
+    case 'ankara': return 'shape-ankara';
+    default: return 'shape-ankara';
+  }
+}
+
+function updateNodeShapeClass(nodeElement, shapeType) {
+  if (!nodeElement) return;
+  nodeElement.classList.remove('shape-rect', 'shape-rounded', 'shape-ankara');
+  nodeElement.classList.add(getShapeClass(shapeType));
+}
+
+function changeNodeShape(nodeId, shapeType) {
+  const node = state.nodes.get(nodeId);
+  if (!node || node.isPlainText) return;
+  
+  node.shape = shapeType;
+  
+  const nodeElement = nodesLayer.querySelector(`.node[data-id="${nodeId}"]`);
+  if (nodeElement) updateNodeShapeClass(nodeElement, shapeType);
+  
+  setStatus(`Форма изменена на ${shapeType === 'rect' ? 'прямоугольник' : shapeType === 'rounded' ? 'скруглённый' : 'оригинальную'}`);
+}
+
+function updateShapeSelectorUI(shapeType) {
+  document.querySelectorAll('.shape-preview').forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.dataset.shape === shapeType) btn.classList.add('active');
+  });
+}
+
+
+function createNode(text, parentId = null, x = 0, y = 0, color = null, isPlainText = false, shape = "ankara") {
   const finalColor = color || getDefaultColor();
   const id = String(state.idCounter++);
   state.nodes.set(id, { 
@@ -668,11 +1037,13 @@ function createNode(text, parentId = null, x = 0, y = 0, color = null, isPlainTe
     width: isPlainText ? 140 : 156, 
     height: isPlainText ? 32 : 64,
     isPlainText: isPlainText,
-    fontSize: isPlainText ? 16 : 14
+    fontSize: isPlainText ? 16 : 14,
+    shape: isPlainText ? null : shape
   });
   if (parentId && state.nodes.has(parentId)) state.nodes.get(parentId).children.push(id);
   return id;
 }
+
 
 function clearMapData() {
   state.nodes.clear();
@@ -682,6 +1053,7 @@ function clearMapData() {
   state.idCounter = 1;
   selectedName.textContent = "нет";
   renameNodeText.value = "";
+  shapeSelectorBlock.style.display = "none";
   render();
 }
 
@@ -834,7 +1206,7 @@ function renderNodes() {
     const selectedClass = state.selectedIds.has(node.id) ? "selected" : "";
     const editingClass = state.inlineEditingId === node.id ? "editing" : "";
     const plainClass = node.isPlainText ? "plain-text" : "";
-    
+    const shapeClass = (!node.isPlainText && node.shape) ? getShapeClass(node.shape) : "";
     const labelHtml = sanitizeNodeHtml(node.text);
     const editorHtml = state.inlineEditingId === node.id
       ? `<textarea class="inline-node-editor" data-node-editor="${node.id}" style="font-size:${node.fontSize || 14}px;">${escapeHtml(node.text)}</textarea>`
@@ -856,7 +1228,7 @@ function renderNodes() {
     
     const bgColor = node.isPlainText ? 'transparent' : node.color;
     
-    html.push(`<div class="node ${selectedClass} ${editingClass} ${plainClass}" 
+    html.push(`<div class="node ${selectedClass} ${editingClass} ${plainClass} ${shapeClass}" 
       data-id="${node.id}" 
       data-plain="${node.isPlainText || false}"
       style="left:${node.x}px; top:${node.y}px; width:${node.width}px; height:${node.height}px; background:${bgColor};">
@@ -978,6 +1350,7 @@ function resetPalette() {
   savePalette();
   renderPalette();
   setStatus("🩶 Палитра очищена. Нажмите на любой круг, чтобы добавить цвет.");
+  autoSave();
 }
 
 function renderSelectedMeta() {
@@ -986,9 +1359,8 @@ function renderSelectedMeta() {
   if (!selectedCount || !node) {
     selectedName.textContent = "нет";
     renameNodeText.value = "";
-    document.querySelectorAll('.custom-palette-btn').forEach(btn => {
-      btn.classList.remove('active');
-    });
+    document.querySelectorAll('.custom-palette-btn').forEach(btn => btn.classList.remove('active'));
+    shapeSelectorBlock.style.display = "none";
     updateFontSizeDisplay();
     return;
   }
@@ -999,13 +1371,19 @@ function renderSelectedMeta() {
   const currentColor = node.color;
   document.querySelectorAll('.custom-palette-btn').forEach(btn => {
     btn.classList.remove('active');
-    if (btn.style.backgroundColor === currentColor && currentColor !== '#FAFAFA' && !node.isPlainText) {
-      btn.classList.add('active');
-    }
+    if (btn.style.backgroundColor === currentColor && currentColor !== '#FAFAFA' && !node.isPlainText) btn.classList.add('active');
   });
+  
+  // Показываем блок выбора формы только для одного обычного узла
+  if (!node.isPlainText && selectedCount === 1) {
+    shapeSelectorBlock.style.display = "block";
+    updateShapeSelectorUI(node.shape || "ankara");
+  } else {
+    shapeSelectorBlock.style.display = "none";
+  }
+  
   updateFontSizeDisplay();
 }
-
 function setSelection(ids, primaryId = null) {
   state.selectedIds = new Set(ids.filter(id => state.nodes.has(id)));
   if (!state.selectedIds.size) {
@@ -1032,6 +1410,7 @@ function render() {
   renderPalette();
   renderSelectedMeta();
   updateTransform();
+  autoSave();
 }
 
 function isFormattableField(element) {
@@ -1199,7 +1578,7 @@ function addChildToSelected() {
     return;
   }
   const parent = state.nodes.get(state.primarySelectedId);
-  const newId = createNode(text, parent.id, parent.x + 150 + parent.children.length * 8, parent.y + (parent.children.length % 2 ? 92 : -92), userPalette[(parent.children.length + 2) % userPalette.length]);
+  const newId = createNode(text, parent.id, parent.x + 150 + parent.children.length * 8, parent.y + (parent.children.length % 2 ? 92 : -92), userPalette[(parent.children.length + 2) % userPalette.length], false, parent.shape || "ankara");
   setSelection([newId], newId);
   newNodeText.value = "";
   setStatus("Подэлемент добавлен.");
@@ -1263,6 +1642,7 @@ function copySyntaxTemplate() {
 function applyMapBackground(color) {
   mapShell.style.background = color;
   setStatus("Фон обновлён.");
+  autoSave();
 }
 
 function showSelectionRect(x1, y1, x2, y2) {
@@ -2096,7 +2476,22 @@ dropdown.querySelector('[data-type="pdf"]').onclick = () => {
 }
 
 // ========== ИНИЦИАЛИЗАЦИЯ ==========
+ 
+// ========== ИНИЦИАЛИЗАЦИЯ ==========
 loadPalette();
+
+// Добавляем кнопки сохранения/загрузки в интерфейс
+addSaveLoadButtons();
+
+// Пытаемся загрузить автосохранение, если нет — создаём карту по умолчанию
+if (!loadMapFromLocalStorage()) {
+  try {
+    buildFromStrict(parseStrictSyntax(sourceInput.value));
+    setStatus("🦅 Карта готова! Выбирайте цвета и форму элементов.");
+  } catch (error) {
+    setStatus(error.message, true);
+  }
+}
 
 buildStructuredBtn.addEventListener("click", () => {
   try {
@@ -2145,6 +2540,26 @@ if (addPlainTextBtn) {
   addPlainTextBtn.addEventListener("click", addPlainTextAtViewportCenter);
 }
 
+// Обработчики выбора формы
+document.querySelectorAll('.shape-preview').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const shapeType = btn.dataset.shape;
+    if (!state.primarySelectedId) {
+      setStatus("Сначала выберите элемент на карте.", true);
+      return;
+    }
+    const node = state.nodes.get(state.primarySelectedId);
+    if (!node || node.isPlainText) {
+      setStatus("Форму можно менять только у обычных элементов.", true);
+      return;
+    }
+    changeNodeShape(state.primarySelectedId, shapeType);
+    render();
+  });
+});
+
 zoomInBtn.addEventListener("click", () => zoomBy(1.16));
 zoomOutBtn.addEventListener("click", () => zoomBy(1 / 1.16));
 closeIntroBtn.addEventListener("click", closeIntro);
@@ -2176,7 +2591,6 @@ window.addEventListener("keydown", e => {
   if (e.key === "+" || e.key === "=" || e.code === "NumpadAdd") { e.preventDefault(); zoomBy(1.16); }
   if (e.key === "-" || e.code === "NumpadSubtract") { e.preventDefault(); zoomBy(1 / 1.16); }
   
-  // Горячие клавиши для изменения размера шрифта
   if ((e.ctrlKey || e.metaKey) && e.key === "+") {
     e.preventDefault();
     changeFontSize(2);
@@ -2198,7 +2612,10 @@ window.addEventListener("keydown", e => {
   }
 });
 
-sourceInput.value = `@MAIN| Подготовка запуска проекта
+// Убираем старый sourceInput.value и buildFromStrict, потому что они уже вызваны выше
+// sourceInput.value оставляем, но не вызываем buildFromStrict повторно
+if (!sourceInput.value || sourceInput.value === "") {
+  sourceInput.value = `@MAIN| Подготовка запуска проекта
 @1| Цели
 @1.1| Что нужно достичь за 3 месяца
 @1.2| Какие метрики успеха
@@ -2209,12 +2626,6 @@ sourceInput.value = `@MAIN| Подготовка запуска проекта
 @3| Риски
 @3.1| Ограничения по времени
 @3.2| Ограничения по бюджету`;
-
-try {
-  buildFromStrict(parseStrictSyntax(sourceInput.value));
-  setStatus("🦅 Карта готова! Выбирайте цвета для элементов.");
-} catch (error) {
-  setStatus(error.message, true);
 }
 
 document.body.style.overflow = 'hidden';
@@ -2228,6 +2639,9 @@ if (document.readyState === 'loading') {
   addExportButton();
   openIntro();
 }
+
+
+
 </script>
 </body>
 </html>
