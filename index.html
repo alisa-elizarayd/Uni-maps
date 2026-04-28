@@ -2082,184 +2082,6 @@ function addPlainTextAtViewportCenter() {
 
 async function exportPNG_Colored() {
   const container = document.getElementById('mapShell');
-  if (!container) { alert("Контейнер не найден"); return; }
-  
-  showLoading(true);
-  
-  const allNodes = document.querySelectorAll('.node');
-  const originalShadows = [];
-  allNodes.forEach(node => {
-    originalShadows.push({ node, shadow: node.style.boxShadow });
-    node.style.boxShadow = 'none';
-  });
-  
-  hideUIElements();
-  if (state.inlineEditingId && typeof closeInlineEditor === 'function') closeInlineEditor(true);
-  await new Promise(r => setTimeout(r, 200));
-  
-  try {
-    const bgColor = mapShell.style.background || '#FAFAFA';
-    const dataUrl = await htmlToImage.toPng(container, {
-      quality: 0.95,
-      pixelRatio: 2,
-      backgroundColor: bgColor
-    });
-    const link = document.createElement('a');
-    link.download = `ankara_colored_${getDateString()}.png`;
-    link.href = dataUrl;
-    link.click();
-    setStatus("✅ PNG сохранён!");
-  } catch (error) {
-    setStatus("❌ Ошибка: " + error.message, true);
-  } finally {
-    originalShadows.forEach(({ node, shadow }) => { node.style.boxShadow = shadow; });
-    showUIElements();
-    showLoading(false);
-    if (typeof render === 'function') render();
-  }
-}
-
-async function exportPNG_Transparent() {
-  const container = document.getElementById('mapShell');
-  if (!container) { alert("Контейнер не найден"); return; }
-  
-  showLoading(true);
-  
-  const allNodes = document.querySelectorAll('.node');
-  const originalShadows = [];
-  allNodes.forEach(node => {
-    originalShadows.push({ node, shadow: node.style.boxShadow });
-    node.style.boxShadow = 'none';
-  });
-  
-  hideUIElements();
-  if (state.inlineEditingId && typeof closeInlineEditor === 'function') closeInlineEditor(true);
-  
-  const originalContainerBg = container.style.background;
-  const originalBodyBg = document.body.style.background;
-  const originalHtmlBg = document.documentElement.style.background;
-  
-  container.style.background = 'transparent';
-  document.body.style.background = 'transparent';
-  document.documentElement.style.background = 'transparent';
-  
-  await new Promise(r => setTimeout(r, 200));
-  
-  try {
-    const dataUrl = await htmlToImage.toPng(container, {
-      quality: 0.95,
-      pixelRatio: 2,
-      backgroundColor: null
-    });
-    const link = document.createElement('a');
-    link.download = `ankara_transparent_${getDateString()}.png`;
-    link.href = dataUrl;
-    link.click();
-    setStatus("✅ PNG с прозрачным фоном сохранён!");
-  } catch (error) {
-    setStatus("❌ Ошибка: " + error.message, true);
-  } finally {
-    container.style.background = originalContainerBg;
-    document.body.style.background = originalBodyBg;
-    document.documentElement.style.background = originalHtmlBg;
-    originalShadows.forEach(({ node, shadow }) => { node.style.boxShadow = shadow; });
-    showUIElements();
-    showLoading(false);
-    if (typeof render === 'function') render();
-  }
-}
-
-async function exportPNGHQ_Colored() {
-  const container = document.getElementById('mapShell');
-  if (!container) { alert("Контейнер не найден"); return; }
-  
-  showLoading(true);
-  
-  const allNodes = document.querySelectorAll('.node');
-  const originalShadows = [];
-  allNodes.forEach(node => {
-    originalShadows.push({ node, shadow: node.style.boxShadow });
-    node.style.boxShadow = 'none';
-  });
-  
-  hideUIElements();
-  if (state.inlineEditingId && typeof closeInlineEditor === 'function') closeInlineEditor(true);
-  await new Promise(r => setTimeout(r, 200));
-  
-  try {
-    const bgColor = mapShell.style.background || '#FAFAFA';
-    const dataUrl = await htmlToImage.toPng(container, {
-      quality: 1,
-      pixelRatio: 5,
-      backgroundColor: bgColor
-    });
-    const link = document.createElement('a');
-    link.download = `ankara_hq_colored_${getDateString()}.png`;
-    link.href = dataUrl;
-    link.click();
-    setStatus("✅ PNG HQ (цветной) сохранён!");
-  } catch (error) {
-    setStatus("❌ Ошибка: " + error.message, true);
-  } finally {
-    originalShadows.forEach(({ node, shadow }) => { node.style.boxShadow = shadow; });
-    showUIElements();
-    showLoading(false);
-    if (typeof render === 'function') render();
-  }
-}
-
-async function exportPNGHQ_Transparent() {
-  const container = document.getElementById('mapShell');
-  if (!container) { alert("Контейнер не найден"); return; }
-  
-  showLoading(true);
-  
-  const allNodes = document.querySelectorAll('.node');
-  const originalShadows = [];
-  allNodes.forEach(node => {
-    originalShadows.push({ node, shadow: node.style.boxShadow });
-    node.style.boxShadow = 'none';
-  });
-  
-  hideUIElements();
-  if (state.inlineEditingId && typeof closeInlineEditor === 'function') closeInlineEditor(true);
-  
-  const originalContainerBg = container.style.background;
-  const originalBodyBg = document.body.style.background;
-  const originalHtmlBg = document.documentElement.style.background;
-  
-  container.style.background = 'transparent';
-  document.body.style.background = 'transparent';
-  document.documentElement.style.background = 'transparent';
-  
-  await new Promise(r => setTimeout(r, 200));
-  
-  try {
-    const dataUrl = await htmlToImage.toPng(container, {
-      quality: 1,
-      pixelRatio: 5,
-      backgroundColor: null
-    });
-    const link = document.createElement('a');
-    link.download = `ankara_hq_transparent_${getDateString()}.png`;
-    link.href = dataUrl;
-    link.click();
-    setStatus("✅ PNG HQ (прозрачный) сохранён!");
-  } catch (error) {
-    setStatus("❌ Ошибка: " + error.message, true);
-  } finally {
-    container.style.background = originalContainerBg;
-    document.body.style.background = originalBodyBg;
-    document.documentElement.style.background = originalHtmlBg;
-    originalShadows.forEach(({ node, shadow }) => { node.style.boxShadow = shadow; });
-    showUIElements();
-    showLoading(false);
-    if (typeof render === 'function') render();
-  }
-}
-
-async function exportPDF() {
-  const container = document.getElementById('mapShell');
   const stage = document.getElementById('mapStage');
   if (!container) { alert("Контейнер не найден"); return; }
   
@@ -2295,9 +2117,130 @@ async function exportPDF() {
     const nodes = document.querySelectorAll('.node');
     const edgesSvg = document.getElementById('edges');
     
-    if (nodes.length === 0) {
-      throw new Error("Нет узлов для экспорта");
+    if (nodes.length === 0) throw new Error("Нет узлов для экспорта");
+    
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    
+    nodes.forEach(node => {
+      const left = parseFloat(node.style.left);
+      const top = parseFloat(node.style.top);
+      const width = node.offsetWidth;
+      const height = node.offsetHeight;
+      
+      const nodeLeft = left - width / 2;
+      const nodeRight = left + width / 2;
+      const nodeTop = top - height / 2;
+      const nodeBottom = top + height / 2;
+      const padding = 30;
+      
+      minX = Math.min(minX, nodeLeft - padding);
+      maxX = Math.max(maxX, nodeRight + padding);
+      minY = Math.min(minY, nodeTop - padding);
+      maxY = Math.max(maxY, nodeBottom + padding);
+    });
+    
+    if (edgesSvg) {
+      const linePaths = edgesSvg.querySelectorAll('.line');
+      linePaths.forEach(line => {
+        const bbox = line.getBBox();
+        if (bbox.x !== undefined) {
+          minX = Math.min(minX, bbox.x - 20);
+          minY = Math.min(minY, bbox.y - 20);
+          maxX = Math.max(maxX, bbox.x + bbox.width + 20);
+          maxY = Math.max(maxY, bbox.y + bbox.height + 20);
+        }
+      });
     }
+    
+    const safePadding = 60;
+    const cropX = minX - safePadding;
+    const cropY = minY - safePadding;
+    const cropWidth = (maxX - minX) + safePadding * 2;
+    const cropHeight = (maxY - minY) + safePadding * 2;
+    const bgColor = mapShell.style.background || '#FAFAFA';
+    
+    const canvas = await htmlToImage.toCanvas(container, {
+      pixelRatio: 3,
+      backgroundColor: bgColor,
+      quality: 1,
+      width: cropWidth,
+      height: cropHeight,
+      style: {
+        transform: `translate(${-cropX}px, ${-cropY}px)`,
+        transformOrigin: 'top left'
+      }
+    });
+    
+    const dataUrl = canvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.download = `ankara_colored_${getDateString()}.png`;
+    link.href = dataUrl;
+    link.click();
+    setStatus("✅ PNG сохранён!");
+    
+  } catch (error) {
+    console.error('Export error:', error);
+    setStatus("❌ Ошибка: " + error.message, true);
+  } finally {
+    originalShadows.forEach(({ node, shadow }) => { node.style.boxShadow = shadow; });
+    container.style.overflow = originalOverflow;
+    stage.style.position = originalPosition;
+    state.panX = originalPanX;
+    state.panY = originalPanY;
+    state.scale = originalScale;
+    updateTransform();
+    showUIElements();
+    showLoading(false);
+    if (typeof render === 'function') render();
+  }
+}
+
+// export png 
+
+async function exportPNG_Transparent() {
+  const container = document.getElementById('mapShell');
+  const stage = document.getElementById('mapStage');
+  if (!container) { alert("Контейнер не найден"); return; }
+  
+  showLoading(true);
+  
+  const allNodes = document.querySelectorAll('.node');
+  const originalShadows = [];
+  allNodes.forEach(node => {
+    originalShadows.push({ node, shadow: node.style.boxShadow });
+    node.style.boxShadow = 'none';
+  });
+  
+  hideUIElements();
+  if (state.inlineEditingId && typeof closeInlineEditor === 'function') closeInlineEditor(true);
+  
+  const originalOverflow = container.style.overflow;
+  const originalPosition = stage.style.position;
+  const originalPanX = state.panX;
+  const originalPanY = state.panY;
+  const originalScale = state.scale;
+  const originalContainerBg = container.style.background;
+  const originalBodyBg = document.body.style.background;
+  const originalHtmlBg = document.documentElement.style.background;
+  
+  try {
+    state.panX = 0;
+    state.panY = 0;
+    state.scale = 1;
+    updateTransform();
+    
+    container.style.overflow = 'visible';
+    stage.style.position = 'relative';
+    container.style.background = 'transparent';
+    document.body.style.background = 'transparent';
+    document.documentElement.style.background = 'transparent';
+    
+    await new Promise(r => setTimeout(r, 150));
+    
+    const nodes = document.querySelectorAll('.node');
+    const edgesSvg = document.getElementById('edges');
+    
+    if (nodes.length === 0) throw new Error("Нет узлов для экспорта");
     
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     
@@ -2338,6 +2281,373 @@ async function exportPDF() {
     const cropWidth = (maxX - minX) + safePadding * 2;
     const cropHeight = (maxY - minY) + safePadding * 2;
     
+    const canvas = await htmlToImage.toCanvas(container, {
+      pixelRatio: 3,
+      backgroundColor: null,
+      quality: 1,
+      width: cropWidth,
+      height: cropHeight,
+      style: {
+        transform: `translate(${-cropX}px, ${-cropY}px)`,
+        transformOrigin: 'top left'
+      }
+    });
+    
+    const dataUrl = canvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.download = `ankara_transparent_${getDateString()}.png`;
+    link.href = dataUrl;
+    link.click();
+    setStatus("✅ PNG с прозрачным фоном сохранён!");
+    
+  } catch (error) {
+    console.error('Export error:', error);
+    setStatus("❌ Ошибка: " + error.message, true);
+  } finally {
+    originalShadows.forEach(({ node, shadow }) => { node.style.boxShadow = shadow; });
+    container.style.overflow = originalOverflow;
+    stage.style.position = originalPosition;
+    container.style.background = originalContainerBg;
+    document.body.style.background = originalBodyBg;
+    document.documentElement.style.background = originalHtmlBg;
+    state.panX = originalPanX;
+    state.panY = originalPanY;
+    state.scale = originalScale;
+    updateTransform();
+    showUIElements();
+    showLoading(false);
+    if (typeof render === 'function') render();
+  }
+}
+
+
+
+  
+///async function exportPNGHQ_Colored() {
+
+async function exportPNGHQ_Colored() {
+  const container = document.getElementById('mapShell');
+  const stage = document.getElementById('mapStage');
+  if (!container) { alert("Контейнер не найден"); return; }
+  
+  showLoading(true);
+  
+  const allNodes = document.querySelectorAll('.node');
+  const originalShadows = [];
+  allNodes.forEach(node => {
+    originalShadows.push({ node, shadow: node.style.boxShadow });
+    node.style.boxShadow = 'none';
+  });
+  
+  hideUIElements();
+  if (state.inlineEditingId && typeof closeInlineEditor === 'function') closeInlineEditor(true);
+  
+  const originalOverflow = container.style.overflow;
+  const originalPosition = stage.style.position;
+  const originalPanX = state.panX;
+  const originalPanY = state.panY;
+  const originalScale = state.scale;
+  
+  try {
+    state.panX = 0;
+    state.panY = 0;
+    state.scale = 1;
+    updateTransform();
+    
+    container.style.overflow = 'visible';
+    stage.style.position = 'relative';
+    
+    await new Promise(r => setTimeout(r, 150));
+    
+    const nodes = document.querySelectorAll('.node');
+    const edgesSvg = document.getElementById('edges');
+    
+    if (nodes.length === 0) throw new Error("Нет узлов для экспорта");
+    
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    
+    nodes.forEach(node => {
+      const left = parseFloat(node.style.left);
+      const top = parseFloat(node.style.top);
+      const width = node.offsetWidth;
+      const height = node.offsetHeight;
+      
+      const nodeLeft = left - width / 2;
+      const nodeRight = left + width / 2;
+      const nodeTop = top - height / 2;
+      const nodeBottom = top + height / 2;
+      const padding = 30;
+      
+      minX = Math.min(minX, nodeLeft - padding);
+      maxX = Math.max(maxX, nodeRight + padding);
+      minY = Math.min(minY, nodeTop - padding);
+      maxY = Math.max(maxY, nodeBottom + padding);
+    });
+    
+    if (edgesSvg) {
+      const linePaths = edgesSvg.querySelectorAll('.line');
+      linePaths.forEach(line => {
+        const bbox = line.getBBox();
+        if (bbox.x !== undefined) {
+          minX = Math.min(minX, bbox.x - 20);
+          minY = Math.min(minY, bbox.y - 20);
+          maxX = Math.max(maxX, bbox.x + bbox.width + 20);
+          maxY = Math.max(maxY, bbox.y + bbox.height + 20);
+        }
+      });
+    }
+    
+    const safePadding = 60;
+    const cropX = minX - safePadding;
+    const cropY = minY - safePadding;
+    const cropWidth = (maxX - minX) + safePadding * 2;
+    const cropHeight = (maxY - minY) + safePadding * 2;
+    const bgColor = mapShell.style.background || '#FAFAFA';
+    
+    const canvas = await htmlToImage.toCanvas(container, {
+      pixelRatio: 5,
+      backgroundColor: bgColor,
+      quality: 1,
+      width: cropWidth,
+      height: cropHeight,
+      style: {
+        transform: `translate(${-cropX}px, ${-cropY}px)`,
+        transformOrigin: 'top left'
+      }
+    });
+    
+    const dataUrl = canvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.download = `ankara_hq_colored_${getDateString()}.png`;
+    link.href = dataUrl;
+    link.click();
+    setStatus("✅ PNG HQ (цветной) сохранён!");
+    
+  } catch (error) {
+    console.error('Export error:', error);
+    setStatus("❌ Ошибка: " + error.message, true);
+  } finally {
+    originalShadows.forEach(({ node, shadow }) => { node.style.boxShadow = shadow; });
+    container.style.overflow = originalOverflow;
+    stage.style.position = originalPosition;
+    state.panX = originalPanX;
+    state.panY = originalPanY;
+    state.scale = originalScale;
+    updateTransform();
+    showUIElements();
+    showLoading(false);
+    if (typeof render === 'function') render();
+  }
+}
+
+//async function exportPNGHQ_Transparent() {
+
+async function exportPNGHQ_Transparent() {
+  const container = document.getElementById('mapShell');
+  const stage = document.getElementById('mapStage');
+  if (!container) { alert("Контейнер не найден"); return; }
+  
+  showLoading(true);
+  
+  const allNodes = document.querySelectorAll('.node');
+  const originalShadows = [];
+  allNodes.forEach(node => {
+    originalShadows.push({ node, shadow: node.style.boxShadow });
+    node.style.boxShadow = 'none';
+  });
+  
+  hideUIElements();
+  if (state.inlineEditingId && typeof closeInlineEditor === 'function') closeInlineEditor(true);
+  
+  const originalOverflow = container.style.overflow;
+  const originalPosition = stage.style.position;
+  const originalPanX = state.panX;
+  const originalPanY = state.panY;
+  const originalScale = state.scale;
+  const originalContainerBg = container.style.background;
+  const originalBodyBg = document.body.style.background;
+  const originalHtmlBg = document.documentElement.style.background;
+  
+  try {
+    state.panX = 0;
+    state.panY = 0;
+    state.scale = 1;
+    updateTransform();
+    
+    container.style.overflow = 'visible';
+    stage.style.position = 'relative';
+    container.style.background = 'transparent';
+    document.body.style.background = 'transparent';
+    document.documentElement.style.background = 'transparent';
+    
+    await new Promise(r => setTimeout(r, 150));
+    
+    const nodes = document.querySelectorAll('.node');
+    const edgesSvg = document.getElementById('edges');
+    
+    if (nodes.length === 0) throw new Error("Нет узлов для экспорта");
+    
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    
+    nodes.forEach(node => {
+      const left = parseFloat(node.style.left);
+      const top = parseFloat(node.style.top);
+      const width = node.offsetWidth;
+      const height = node.offsetHeight;
+      
+      const nodeLeft = left - width / 2;
+      const nodeRight = left + width / 2;
+      const nodeTop = top - height / 2;
+      const nodeBottom = top + height / 2;
+      const padding = 30;
+      
+      minX = Math.min(minX, nodeLeft - padding);
+      maxX = Math.max(maxX, nodeRight + padding);
+      minY = Math.min(minY, nodeTop - padding);
+      maxY = Math.max(maxY, nodeBottom + padding);
+    });
+    
+    if (edgesSvg) {
+      const linePaths = edgesSvg.querySelectorAll('.line');
+      linePaths.forEach(line => {
+        const bbox = line.getBBox();
+        if (bbox.x !== undefined) {
+          minX = Math.min(minX, bbox.x - 20);
+          minY = Math.min(minY, bbox.y - 20);
+          maxX = Math.max(maxX, bbox.x + bbox.width + 20);
+          maxY = Math.max(maxY, bbox.y + bbox.height + 20);
+        }
+      });
+    }
+    
+    const safePadding = 60;
+    const cropX = minX - safePadding;
+    const cropY = minY - safePadding;
+    const cropWidth = (maxX - minX) + safePadding * 2;
+    const cropHeight = (maxY - minY) + safePadding * 2;
+    
+    const canvas = await htmlToImage.toCanvas(container, {
+      pixelRatio: 5,
+      backgroundColor: null,
+      quality: 1,
+      width: cropWidth,
+      height: cropHeight,
+      style: {
+        transform: `translate(${-cropX}px, ${-cropY}px)`,
+        transformOrigin: 'top left'
+      }
+    });
+    
+    const dataUrl = canvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.download = `ankara_hq_transparent_${getDateString()}.png`;
+    link.href = dataUrl;
+    link.click();
+    setStatus("✅ PNG HQ (прозрачный) сохранён!");
+    
+  } catch (error) {
+    console.error('Export error:', error);
+    setStatus("❌ Ошибка: " + error.message, true);
+  } finally {
+    originalShadows.forEach(({ node, shadow }) => { node.style.boxShadow = shadow; });
+    container.style.overflow = originalOverflow;
+    stage.style.position = originalPosition;
+    container.style.background = originalContainerBg;
+    document.body.style.background = originalBodyBg;
+    document.documentElement.style.background = originalHtmlBg;
+    state.panX = originalPanX;
+    state.panY = originalPanY;
+    state.scale = originalScale;
+    updateTransform();
+    showUIElements();
+    showLoading(false);
+    if (typeof render === 'function') render();
+  }
+}
+
+
+
+
+
+ 
+
+async function exportPDF() {
+  const container = document.getElementById('mapShell');
+  const stage = document.getElementById('mapStage');
+  if (!container) { alert("Контейнер не найден"); return; }
+  
+  showLoading(true);
+  
+  const allNodes = document.querySelectorAll('.node');
+  const originalShadows = [];
+  allNodes.forEach(node => {
+    originalShadows.push({ node, shadow: node.style.boxShadow });
+    node.style.boxShadow = 'none';
+  });
+  
+  hideUIElements();
+  if (state.inlineEditingId && typeof closeInlineEditor === 'function') closeInlineEditor(true);
+  
+  const originalOverflow = container.style.overflow;
+  const originalPosition = stage.style.position;
+  const originalPanX = state.panX;
+  const originalPanY = state.panY;
+  const originalScale = state.scale;
+  
+  try {
+    state.panX = 0;
+    state.panY = 0;
+    state.scale = 1;
+    updateTransform();
+    
+    container.style.overflow = 'visible';
+    stage.style.position = 'relative';
+    
+    await new Promise(r => setTimeout(r, 150));
+    
+    const nodes = document.querySelectorAll('.node');
+    const edgesSvg = document.getElementById('edges');
+    
+    if (nodes.length === 0) throw new Error("Нет узлов для экспорта");
+    
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    
+    nodes.forEach(node => {
+      const left = parseFloat(node.style.left);
+      const top = parseFloat(node.style.top);
+      const width = node.offsetWidth;
+      const height = node.offsetHeight;
+      
+      const nodeLeft = left - width / 2;
+      const nodeRight = left + width / 2;
+      const nodeTop = top - height / 2;
+      const nodeBottom = top + height / 2;
+      const padding = 30;
+      
+      minX = Math.min(minX, nodeLeft - padding);
+      maxX = Math.max(maxX, nodeRight + padding);
+      minY = Math.min(minY, nodeTop - padding);
+      maxY = Math.max(maxY, nodeBottom + padding);
+    });
+    
+    if (edgesSvg) {
+      const linePaths = edgesSvg.querySelectorAll('.line');
+      linePaths.forEach(line => {
+        const bbox = line.getBBox();
+        if (bbox.x !== undefined) {
+          minX = Math.min(minX, bbox.x - 20);
+          minY = Math.min(minY, bbox.y - 20);
+          maxX = Math.max(maxX, bbox.x + bbox.width + 20);
+          maxY = Math.max(maxY, bbox.y + bbox.height + 20);
+        }
+      });
+    }
+    
+    const safePadding = 60;
+    const cropX = minX - safePadding;
+    const cropY = minY - safePadding;
+    const cropWidth = (maxX - minX) + safePadding * 2;
+    const cropHeight = (maxY - minY) + safePadding * 2;
     const bgColor = mapShell.style.background || '#FAFAFA';
     
     const canvas = await htmlToImage.toCanvas(container, {
@@ -2349,11 +2659,12 @@ async function exportPDF() {
       style: {
         transform: `translate(${-cropX}px, ${-cropY}px)`,
         transformOrigin: 'top left'
-      }
+      },
+      skipAutoScale: false,
+      cacheBust: true
     });
     
     const { jsPDF } = window.jspdf;
-    
     const canvasWidth = canvas.width;
     const canvasHeight = canvas.height;
     const pdfWidth = 210;
@@ -2379,12 +2690,7 @@ async function exportPDF() {
       }
     }
     
-    const pdf = new jsPDF({
-      unit: 'mm',
-      format: 'a4',
-      orientation: orientation
-    });
-    
+    const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: orientation });
     const imgData = canvas.toDataURL('image/jpeg', 0.98);
     pdf.addImage(imgData, 'JPEG', 0, 0, finalPdfWidth, finalPdfHeight);
     pdf.save(`ankara_${getDateString()}.pdf`);
@@ -2396,14 +2702,12 @@ async function exportPDF() {
     setStatus("❌ Ошибка PDF: " + error.message, true);
   } finally {
     originalShadows.forEach(({ node, shadow }) => { node.style.boxShadow = shadow; });
-    
     container.style.overflow = originalOverflow;
     stage.style.position = originalPosition;
     state.panX = originalPanX;
     state.panY = originalPanY;
     state.scale = originalScale;
     updateTransform();
-    
     showUIElements();
     showLoading(false);
     if (typeof render === 'function') render();
