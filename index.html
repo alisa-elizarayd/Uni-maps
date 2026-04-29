@@ -486,6 +486,13 @@
         <button id="addNode" class="rounded-full bg-[#525252] px-4 py-2 text-sm text-white cursor-pointer">➕⬜</button>
       </div>
 
+      <!-- Кнопка для вставки промежуточного узла -->
+      <div class="mt-2 flex gap-2">
+        <button id="insertIntermediateBtn" class="rounded-full bg-[#525252] px-4 py-2 text-sm text-white cursor-pointer">
+          🔁 Вставить промежуточный
+        </button>
+      </div>
+
       <!-- Кнопка для добавления свободного текста -->
       <div class="mt-2 flex gap-2">
         <button id="addPlainTextBtn" class="rounded-full bg-[#737373] px-4 py-2 text-sm text-white cursor-pointer">
@@ -2078,6 +2085,88 @@ function addPlainTextAtViewportCenter() {
   setStatus("Добавлен текстовый блок. Дважды кликните для редактирования.");
 }
 
+// ========== ФУНКЦИЯ ВСТАВКИ ПРОМЕЖУТОЧНОГО УЗЛА ==========
+
+function insertIntermediateAbove() {
+  // 1. Проверяем, выделен ли узел
+  if (!state.primarySelectedId) {
+    setStatus("❌ Сначала выберите узел, над которым нужно вставить промежуточный.", true);
+    return;
+  }
+  
+  const childNode = state.nodes.get(state.primarySelectedId);
+  if (!childNode) {
+    setStatus("❌ Ошибка: выбранный узел не найден.", true);
+    return;
+  }
+  
+  // Запрещаем вставку над корневым узлом
+  if (childNode.id === state.rootId) {
+    setStatus("❌ Нельзя вставить узел над корневым элементом.", true);
+    return;
+  }
+  
+  const parentId = childNode.parentId;
+  const parentNode = parentId ? state.nodes.get(parentId) : null;
+  
+  // 2. Запрашиваем текст
+  const newNodeText = prompt("📝 Введите текст промежуточного узла:", "Промежуточный");
+  if (!newNodeText || newNodeText.trim() === "") {
+    setStatus("❌ Вставка отменена.");
+    return;
+  }
+  
+  // 3. Вычисляем позицию (между родителем и текущим узлом)
+  let newX = childNode.x - 50;
+  let newY = childNode.y - 40;
+  
+  if (parentNode) {
+    newX = (parentNode.x + childNode.x) / 2 + 20;
+    newY = (parentNode.y + childNode.y) / 2 - 15;
+  }
+  
+  // 4. Создаём новый узел
+  const newId = String(state.idCounter++);
+  const newNode = {
+    id: newId,
+    text: newNodeText.trim(),
+    parentId: parentId,
+    children: [childNode.id],
+    x: newX,
+    y: newY,
+    width: 156,
+    height: 64,
+    color: parentNode ? parentNode.color : getDefaultColor(),
+    isPlainText: false,
+    fontSize: 14,
+    shape: parentNode ? (parentNode.shape || "ankara") : "ankara"
+  };
+  
+  // 5. Обновляем связи
+  if (parentNode) {
+    // Удаляем child из children родителя
+    const index = parentNode.children.indexOf(childNode.id);
+    if (index !== -1) parentNode.children.splice(index, 1);
+    // Добавляем новый узел в children родителя
+    parentNode.children.push(newId);
+  }
+  
+  // Обновляем parentId у дочернего узла
+  childNode.parentId = newId;
+  
+  // Добавляем новый узел в state
+  state.nodes.set(newId, newNode);
+  
+  // 6. Перерисовываем карту
+  render();
+  
+  // 7. Выделяем новый узел и открываем редактирование
+  setSelection([newId], newId);
+  setTimeout(() => openInlineEditor(newId), 100);
+  
+  setStatus(`✅ Промежуточный узел "${newNodeText.trim()}" вставлен перед "${childNode.text}"`);
+}
+
 // ========== БЛОК ЭКСПОРТА (оставлен без изменений) ==========
 
 async function exportPNG_Colored() {
@@ -2842,6 +2931,12 @@ if (fontSizeDecrease) {
 const addPlainTextBtn = document.getElementById("addPlainTextBtn");
 if (addPlainTextBtn) {
   addPlainTextBtn.addEventListener("click", addPlainTextAtViewportCenter);
+}
+
+// Кнопка вставки промежуточного узла
+const insertIntermediateBtn = document.getElementById("insertIntermediateBtn");
+if (insertIntermediateBtn) {
+  insertIntermediateBtn.addEventListener("click", insertIntermediateAbove);
 }
 
 // Обработчики выбора формы
