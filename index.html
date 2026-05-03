@@ -664,7 +664,7 @@
 <div class="h-full w-full flex">
   <aside class="panel w-[390px] max-w-[48vw] min-w-[310px] p-4 overflow-y-auto">
     <h1 class="text-2xl font-semibold text-[#404040]">🦅 Уни-карты</h1>
-    <p class="text-xs text-[#737373] mt-0.5">by @elizarayd • версия "Darya"</p>
+    <p class="text-xs text-[#737373] mt-0.5">by @elizarayd • версия "Lola"</p>
     <p class="mt-1 text-sm text-[#525252]">Структурируйте мысли — строго, чисто, со вкусом.</p>
 
     <label class="block mt-4 text-sm font-semibold text-[#404040]">📝 Конспект / текст</label>
@@ -1719,6 +1719,88 @@ function buildFromStrict(parsed) {
   centerOnRoot();
   setSelection([state.rootId], state.rootId);
   render();
+}
+
+// Новая функция для построения карты с выбором раскладки
+function buildFromStrictWithLayout(parsed, layoutType = 'radial') {
+  clearMapData();
+  const tokenToNode = new Map();
+  
+  parsed.forEach((item) => {
+    if (item.token === "MAIN") {
+      const rootColor = userPalette.find(c => c !== null) || "#E8E8E8";
+      const rootId = createNode(item.text, null, 0, 0, rootColor, false, "ankara");
+      state.rootId = rootId;
+      tokenToNode.set("MAIN", rootId);
+      return;
+    }
+    
+    const parentId = tokenToNode.get(item.parent);
+    const parentNode = state.nodes.get(parentId);
+    
+    let nodeColor;
+    if (parentNode.id === state.rootId) {
+      const rootChildren = state.nodes.get(state.rootId).children;
+      const childIndex = rootChildren.length;
+      const availableColors = userPalette.filter(c => c !== null);
+      if (availableColors.length > 0) {
+        const colorIndex = (childIndex + 1) % availableColors.length;
+        nodeColor = availableColors[colorIndex];
+      } else {
+        nodeColor = "#E8E8E8";
+      }
+    } else {
+      nodeColor = parentNode.color;
+    }
+    
+    const nodeId = createNode(item.text, parentId, 0, 0, nodeColor, false, "ankara");
+    tokenToNode.set(item.token, nodeId);
+  });
+  
+  // Применяем нужную раскладку
+  if (layoutType === 'horizontal') {
+    applyHorizontalLayout();
+  } else {
+    applyInitialLayout();
+  }
+  
+  centerOnRoot();
+  setSelection([state.rootId], state.rootId);
+  render();
+}
+
+// Новая функция для горизонтальной раскладки (только для Roadmap)
+function applyHorizontalLayout() {
+  if (!state.rootId) return;
+  const root = state.nodes.get(state.rootId);
+  root.x = 0;
+  root.y = 0;
+
+  const horizontalSpacing = 320;  // Расстояние между этапами
+  const verticalSpacing = 180;     // Расстояние до подзадач
+  
+  // Раскладываем детей корня (Q1, Q2, Q3...) горизонтально
+  const topLevel = root.children;
+  const total = topLevel.length;
+  
+  topLevel.forEach((id, index) => {
+    const node = state.nodes.get(id);
+    // Сдвигаем влево, чтобы центр был на 0
+    const offsetX = (index - (total - 1) / 2) * horizontalSpacing;
+    node.x = offsetX;
+    node.y = -50; // Немного выше для красоты
+    
+    // Раскладываем подзадачи под каждым этапом
+    const subTasks = node.children;
+    const subCount = subTasks.length;
+    subTasks.forEach((subId, subIdx) => {
+      const subNode = state.nodes.get(subId);
+      // Сдвигаем подзадачи относительно родителя по горизонтали (веером)
+      const subOffsetX = (subIdx - (subCount - 1) / 2) * 140;
+      subNode.x = node.x + subOffsetX;
+      subNode.y = node.y + verticalSpacing;
+    });
+  });
 }
 
 function renderLines() {
@@ -3842,6 +3924,9 @@ function loadTemplateFromData(templateData) {
 }
 
 // Загрузка встроенного шаблона
+
+
+// Загрузка встроенного шаблона
 function loadBuiltInTemplate(templateKey) {
   const sourceText = builtInTemplates[templateKey];
   if (!sourceText) return;
@@ -3850,7 +3935,15 @@ function loadBuiltInTemplate(templateKey) {
   
   try {
     const parsed = parseStrictSyntax(sourceText);
-    buildFromStrict(parsed);
+    
+    // Специальная обработка для Roadmap
+    if (templateKey === 'roadmap') {
+      buildFromStrictWithLayout(parsed, 'horizontal');
+    } else {
+      // Остальные шаблоны используют стандартную радиальную раскладку
+      buildFromStrict(parsed);
+    }
+    
     setStatus(`✅ Шаблон "${templateKey}" загружен`);
   } catch(e) {
     setStatus("❌ Ошибка загрузки шаблона: " + e.message, true);
