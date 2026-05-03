@@ -120,6 +120,11 @@
   border-radius: 28px 12px 28px 12px;
 }
 
+/* Форма 4: Миндальная (для стикеров) */
+.node.shape-almond {
+  border-radius: 32px 16px 32px 16px;
+}
+
 /* ========== КНОПКИ ВЫБОРА ФОРМЫ ========== */
 .shape-preview {
   width: 40px;
@@ -424,13 +429,242 @@
       min-width: 45px;
       text-align: center;
     }
+
+/* ========== СТИЛИ ДЛЯ ШАБЛОНОВ (адаптировано под Unicards) ========== */
+.template-dropdown {
+  position: absolute;
+  background: var(--neutral-50);
+  border: 1px solid var(--neutral-400);
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  min-width: 220px;
+  z-index: 100;
+  display: none;
+  right: 0;
+  top: 100%;
+  margin-top: 4px;
+}
+.template-dropdown.show { display: block; }
+.template-group {
+  padding: 8px 0;
+}
+.template-group-header {
+  padding: 6px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--neutral-600);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--neutral-300);
+}
+.template-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  transition: background 0.1s;
+  color: var(--neutral-700);
+}
+.template-item:hover { background: var(--neutral-100); }
+.template-item.delete { color: #c0392b; }
+.template-item.delete:hover { background: rgba(192,57,43,0.1); }
+.template-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+}
+.template-modal.open { display: flex; }
+.template-modal-panel {
+  background: var(--neutral-50);
+  border-radius: 24px;
+  border: 1px solid var(--neutral-400);
+  width: min(400px, calc(100vw - 32px));
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.template-modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--neutral-200);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.template-modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--neutral-700);
+}
+.template-modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--neutral-500);
+}
+.template-modal-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+.template-modal-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--neutral-200);
+}
+.template-modal-item-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--neutral-700);
+}
+.template-modal-item-date {
+  font-size: 10px;
+  color: var(--neutral-500);
+  margin-left: 10px;
+}
+.template-modal-item-delete {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.1s; 
+  color: var(--neutral-600);
+}
+.template-modal-item-delete:hover { opacity: 1; }
+.template-modal-footer {
+  padding: 16px;
+  border-top: 1px solid var(--neutral-200);
+  display: flex;
+  gap: 10px;
+}
+.template-modal-footer button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 40px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+.template-save-btn {
+  background: var(--neutral-600);
+  color: white;
+}
+.template-cancel-btn {
+  background: var(--neutral-300);
+  color: var(--neutral-700);
+}
+
+
+/* Стили для заметок-стикеров */
+.node.sticker {
+  background: #FFF9C4;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.1s ease;
+  min-width: 160px;
+  min-height: 120px;
+  padding: 16px 12px;
+  border: 1px solid rgba(0,0,0,0.08);
+  font-family: "Georgia", "Times New Roman", serif;
+}
+
+
+/* Эффект оторванного уголка - усиленный */
+.node.sticker::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 35px;
+  height: 35px;
+  background: linear-gradient(135deg, transparent 55%, rgba(0,0,0,0.08) 55%);
+  border-bottom-right-radius: inherit;
+  pointer-events: none;
+  box-shadow: -2px -2px 4px rgba(0,0,0,0.05);
+}
+
+/* Наклон при наведении */
+.node.sticker:hover {
+  transform: translate(-50%, -50%) rotate(1deg) scale(1.02);
+}
+
+/* Текст внутри стикера */
+.node.sticker .node-label {
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #3E2723;
+  text-align: left;
+  display: block;
+  white-space: pre-wrap;
+}
+
+/* Редактор внутри заметки */
+.node.sticker .inline-node-editor {
+  background: #FFFEF5;
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #3E2723;
+  border: 1px solid #E0C8A0;
+  border-radius: 8px;
+}
+
+/* Большая палитра цветов для стикеров */
+#stickerColorPalette {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.sticker-color-btn {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  border-radius: 12px;
+  border: 2px solid var(--neutral-500);
+  cursor: var(--ankara-cursor);
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.sticker-color-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.sticker-color-btn.active {
+  border-color: var(--neutral-700);
+  outline: 3px solid var(--neutral-700);
+  outline-offset: 2px;
+  transform: scale(1.08);
+}
+
+/* Анимация появления блока */
+#stickerColorBlock {
+  transition: opacity 0.2s ease;
+}
+
   </style>
 </head>
 <body>
 <div class="h-full w-full flex">
   <aside class="panel w-[390px] max-w-[48vw] min-w-[310px] p-4 overflow-y-auto">
     <h1 class="text-2xl font-semibold text-[#404040]">🦅 Уни-карты</h1>
-    <p class="text-xs text-[#737373] mt-0.5">by @elizarayd • версия "Mary"</p>
+    <p class="text-xs text-[#737373] mt-0.5">by @elizarayd • версия "Darya"</p>
     <p class="mt-1 text-sm text-[#525252]">Структурируйте мысли — строго, чисто, со вкусом.</p>
 
     <label class="block mt-4 text-sm font-semibold text-[#404040]">📝 Конспект / текст</label>
@@ -446,6 +680,67 @@
     <div class="mt-2 flex flex-wrap gap-2">
       <button id="undoBtn" class="rounded-full bg-[#737373] px-5 py-2 text-sm font-medium text-white hover:bg-[#525252] cursor-pointer">↩️ Отменить</button>
     </div>
+
+<div class="mt-2 flex flex-wrap gap-2">
+  <button id="createRootBtn" class="rounded-full bg-[#828282] px-5 py-2 text-sm font-medium text-white hover:bg-[#3B3B3B] cursor-pointer">➕ Создать основной узел</button>
+</div>
+
+
+<!-- ========== БЛОК ШАБЛОНОВ ========== -->
+<div class="mt-4 border-t border-[#D4D4D4] pt-3">
+  <div class="flex items-center justify-between">
+    <span class="text-sm font-medium text-[#404040]">📁 Шаблоны</span>
+    <button id="templatesManageBtn" class="text-sm text-[#737373] hover:text-[#404040]" title="Управление шаблонами">⚙️</button>
+  </div>
+  <div class="mt-2 flex gap-2 relative">
+    <button id="saveTemplateBtn" class="rounded-full bg-[#525252] px-4 py-1.5 text-xs text-white hover:bg-[#404040]">💾 Сохранить</button>
+    <div class="relative">
+      <button id="loadTemplateBtn" class="rounded-full bg-[#737373] px-4 py-1.5 text-xs text-white hover:bg-[#525252]">📂 Загрузить ▼</button>
+      <div id="templateDropdown" class="template-dropdown">
+        <div class="template-group">
+          <div class="template-group-header">🌰 Встроенные</div>
+          <div class="template-item" data-template="roadmap">📊 Roadmap (дорожная карта)</div>
+          <div class="template-item" data-template="swot">🔍 SWOT анализ</div>
+          <div class="template-item" data-template="brainstorm">💡 Brainstorm</div>
+        </div>
+        <div class="template-group" id="myTemplatesGroup">
+          <div class="template-group-header">📂 Мои шаблоны</div>
+          <div id="myTemplatesList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== МОДАЛЬНОЕ ОКНО УПРАВЛЕНИЯ ШАБЛОНАМИ ========== -->
+<div id="templatesModal" class="template-modal">
+  <div class="template-modal-panel">
+    <div class="template-modal-header">
+      <span class="template-modal-title">📁 Управление шаблонами</span>
+      <button class="template-modal-close" id="templatesModalClose">&times;</button>
+    </div>
+    <div class="template-modal-list" id="templatesModalList">
+      <div class="template-group-header">🌰 Встроенные (только для загрузки)</div>
+      <div class="template-modal-item">
+        <span>📊 Roadmap (дорожная карта)</span>
+        <button class="template-modal-item-delete" data-template-load="roadmap" style="opacity:0.5; cursor:pointer;">📂</button>
+      </div>
+      <div class="template-modal-item">
+        <span>🔍 SWOT анализ</span>
+        <button class="template-modal-item-delete" data-template-load="swot" style="opacity:0.5; cursor:pointer;">📂</button>
+      </div>
+      <div class="template-modal-item">
+        <span>💡 Brainstorm</span>
+        <button class="template-modal-item-delete" data-template-load="brainstorm" style="opacity:0.5; cursor:pointer;">📂</button>
+      </div>
+      <div class="template-group-header" style="margin-top:12px;">📂 Мои шаблоны</div>
+      <div id="templatesModalMyList"></div>
+    </div>
+    <div class="template-modal-footer">
+      <button class="template-cancel-btn" id="templatesModalCancel">Закрыть</button>
+    </div>
+  </div>
+</div>
 
     <div class="mt-3 rounded-2xl border border-[#D4D4D4] bg-[#FAFAFA] p-3">
       <label class="block text-sm font-medium text-[#404040]">🎨 Фон рабочей области</label>
@@ -517,6 +812,12 @@
 
       <button id="deleteNode" class="mt-4 rounded-full bg-[#262626] px-4 py-2 text-sm text-white hover:bg-[#171717] cursor-pointer">🗑️ Удалить</button>
     </div>
+
+<div id="stickerColorBlock" class="mt-4 pt-3 border-t border-[#D4D4D4]" style="display: none;">
+  <label class="block text-sm font-medium text-[#404040] mb-2">📌 Цвет стикера (заметки)</label>
+  <div id="stickerColorPalette" class="mt-2 grid grid-cols-6 gap-2"></div>
+  <p class="text-xs text-[#737373] mt-2">✨ Выберите цвет для текущей заметки</p>
+</div>
 
     <div class="hint-box mt-5 p-3">
       <p class="text-sm font-semibold text-[#525252]">📋 Формат для ИИ</p>
@@ -598,6 +899,43 @@
 // Пользовательская палитра (8 цветов, сохраняется в localStorage)
 let userPalette = [null, null, null, null, null, null, null, null];
 // Загрузка сохраненной палитры
+
+
+// ======================== БОЛЬШАЯ ПАЛИТРА ДЛЯ СТИКЕРОВ (ОПТИМИЗИРОВАННАЯ) ========================
+const stickerColorPalette = [
+  // ⚪ Белый, серый, чёрный (5 цветов - от светлого к тёмному)
+  "#FFFFFF", "#E0E0E0", "#9E9E9E", "#424242", "#000000",
+  
+  // 🔴 Красный + бордовый (5 цветов)
+  "#FFCDD2", "#EF9A9A", "#EF5350", "#C62828", "#8B0000",
+  
+  // 🟠 Оранжевый / Рыжий (4 цвета)
+  "#FFE0B2", "#FFB74D", "#FF9800", "#E65100",
+  
+  // 🟡 Жёлтый (4 цвета)
+  "#FFF9C4", "#FFEE58", "#FFC107", "#F57F17",
+  
+  // 🟢 Зелёный (5 цветов)
+  "#C8E6C9", "#81C784", "#4CAF50", "#2E7D32", "#1B5E20",
+  
+  // 💚 Мятный / Бирюзовый (4 цвета)
+  "#B2DFDB", "#4DB6AC", "#009688", "#004D40",
+  
+  // 💙 Голубой (4 цвета)
+  "#B3E5FC", "#29B6F6", "#0288D1", "#01579B",
+  
+  // 🔵 Синий (4 цвета)
+  "#90CAF9", "#42A5F5", "#1976D2", "#0D47A1",
+  
+  // 🟣 Фиолетовый (4 цвета)
+  "#E1BEE7", "#BA68C8", "#8E24AA", "#4A148C",
+  
+  // 🩷 Розовый (4 цвета)
+  "#F8BBD0", "#F06292", "#E91E63", "#880E4F",
+  
+  // 🤎 Коричневый / Бежевый (4 цвета)
+  "#D7CCC8", "#A1887F", "#6D4C41", "#3E2723"
+];
 
 function loadPalette() {
   const saved = localStorage.getItem('ankara_palette');
@@ -1341,18 +1679,42 @@ function centerOnRoot() {
 function buildFromStrict(parsed) {
   clearMapData();
   const tokenToNode = new Map();
+  
   parsed.forEach((item) => {
     if (item.token === "MAIN") {
-      const rootId = createNode(item.text, null, 0, 0, userPalette[0]);
+      // Берём первый НЕ пустой цвет из userPalette, или стандартный
+      const rootColor = userPalette.find(c => c !== null) || "#E8E8E8";
+      const rootId = createNode(item.text, null, 0, 0, rootColor, false, "ankara");
       state.rootId = rootId;
       tokenToNode.set("MAIN", rootId);
       return;
     }
+    
     const parentId = tokenToNode.get(item.parent);
-    const color = userPalette[(item.level + 1) % userPalette.length];
-    const nodeId = createNode(item.text, parentId, 0, 0, color);
+    const parentNode = state.nodes.get(parentId);
+    
+    let nodeColor;
+    if (parentNode.id === state.rootId) {
+      // Для детей корня — берём следующий доступный цвет из userPalette
+      const rootChildren = state.nodes.get(state.rootId).children;
+      const childIndex = rootChildren.length;
+      // Ищем не пустые цвета в userPalette
+      const availableColors = userPalette.filter(c => c !== null);
+      if (availableColors.length > 0) {
+        const colorIndex = (childIndex + 1) % availableColors.length;
+        nodeColor = availableColors[colorIndex];
+      } else {
+        nodeColor = "#E8E8E8";
+      }
+    } else {
+      // Если родитель НЕ корень — наследуем цвет родителя
+      nodeColor = parentNode.color;
+    }
+    
+    const nodeId = createNode(item.text, parentId, 0, 0, nodeColor, false, "ankara");
     tokenToNode.set(item.token, nodeId);
   });
+  
   applyInitialLayout();
   centerOnRoot();
   setSelection([state.rootId], state.rootId);
@@ -1376,19 +1738,41 @@ function renderLines() {
   edgesSvg.innerHTML = parts.join("");
 }
 
+// function renderNodes() {
+
 function renderNodes() {
   const html = [];
   state.nodes.forEach(node => {
     const selectedClass = state.selectedIds.has(node.id) ? "selected" : "";
     const editingClass = state.inlineEditingId === node.id ? "editing" : "";
     const plainClass = node.isPlainText ? "plain-text" : "";
+    const stickerClass = node.isSticker ? "sticker" : "";
     const shapeClass = (!node.isPlainText && node.shape) ? getShapeClass(node.shape) : "";
+    
+    let bgColor;
+    if (node.isPlainText) {
+      bgColor = 'transparent';
+    } else if (node.isSticker) {
+      bgColor = node.color || "#FFF9C4";
+    } else {
+      bgColor = node.color;
+    }
+    
+    // ✅ ИСПРАВЛЕНО: для стикеров используем getContrastColor
+    let textColor;
+    if (node.isPlainText) {
+      textColor = '#333333';
+    } else if (node.isSticker) {
+      textColor = getContrastColor(node.color);  // ← теперь цвет текста зависит от фона!
+    } else {
+      textColor = getContrastColor(node.color);
+    }
+    
     const labelHtml = sanitizeNodeHtml(node.text);
     const editorHtml = state.inlineEditingId === node.id
       ? `<textarea class="inline-node-editor" data-node-editor="${node.id}" style="font-size:${node.fontSize || 14}px;">${escapeHtml(node.text)}</textarea>`
-      : `<span class="node-label" style="color: ${node.isPlainText ? '#333333' : getContrastColor(node.color)}; font-size:${node.fontSize || 14}px;">${labelHtml}</span>`;
+      : `<span class="node-label" style="color: ${textColor}; font-size:${node.fontSize || 14}px;">${labelHtml}</span>`;
     
-    // Для plain-текста показываем только один диагональный хендл
     const handles = node.isPlainText ? `
       <span class="resize-handle corner corner-br" data-handle="bottom-right" data-icon="↘" title="Изменить размер шрифта"></span>
     ` : `
@@ -1402,9 +1786,7 @@ function renderNodes() {
       <span class="resize-handle corner corner-br" data-handle="bottom-right" data-icon="↘"></span>
     `;
     
-    const bgColor = node.isPlainText ? 'transparent' : node.color;
-    
-    html.push(`<div class="node ${selectedClass} ${editingClass} ${plainClass} ${shapeClass}" 
+    html.push(`<div class="node ${selectedClass} ${editingClass} ${plainClass} ${stickerClass} ${shapeClass}" 
       data-id="${node.id}" 
       data-plain="${node.isPlainText || false}"
       style="left:${node.x}px; top:${node.y}px; width:${node.width}px; height:${node.height}px; background:${bgColor};">
@@ -1414,6 +1796,7 @@ function renderNodes() {
   });
   nodesLayer.innerHTML = html.join("");
 }
+
 
 // Функция для открытия color picker и сохранения цвета в палитру
 function renderPalette() {
@@ -1586,6 +1969,7 @@ function render() {
   renderNodes();
   renderLines();
   renderPalette();
+  renderStickerColorPalette();
   renderSelectedMeta();
   updateTransform();
   autoSave();
@@ -3251,6 +3635,465 @@ if (document.readyState === 'loading') {
 }
 
 
+// ========== СОЗДАНИЕ КОРНЕВОГО УЗЛА (ОСНОВЫ) ==========
+function createRootNode() {
+  // Сохраняем текущее состояние для Undo
+  saveToHistory();
+  
+  // Если уже есть корневой узел, спрашиваем
+  if (state.rootId) {
+    const overwrite = confirm("На карте уже есть корневой элемент. Создать новый (текущая карта будет очищена)?");
+    if (!overwrite) return;
+    clearMapData();
+  }
+  
+  // Запрашиваем текст узла
+  const nodeText = prompt("📝 Введите название основного узла:", "Моя идея");
+  if (!nodeText || nodeText.trim() === "") {
+    setStatus("❌ Создание отменено");
+    return;
+  }
+  
+  // Создаём корневой узел в центре
+  const rootColor = userPalette[0] || "#E8E8E8";  // адаптация под Мэри
+  const rootId = createNode(nodeText.trim(), null, 0, 0, rootColor, false, "ankara");
+  state.rootId = rootId;
+  
+  // Центрируем камеру на узле
+  setTimeout(() => {
+    const rect = mapShell.getBoundingClientRect();
+    state.panX = rect.width / 2;
+    state.panY = rect.height / 2;
+    state.scale = 1;
+    updateTransform();
+  }, 50);
+  
+  // Выделяем новый узел
+  setSelection([rootId], rootId);
+  render();
+  
+  setStatus(`✅ Основной узел "${nodeText.trim()}" создан. Теперь можно добавлять подэлементы!`);
+}
+
+// Кнопка создания корневого узла
+const createRootBtn = document.getElementById("createRootBtn");
+if (createRootBtn) {
+  createRootBtn.addEventListener("click", createRootNode);
+}
+
+//ШАБЛОНЫ ПРЕСЕТС ИЗ НИКИТЫ 
+
+// ========== ШАБЛОНЫ (PRESETS) ==========
+const STORAGE_KEY = 'almond_my_templates';
+
+// Встроенные шаблоны (данные)
+const builtInTemplates = {
+  roadmap: `@MAIN| 🗺️ Roadmap проекта
+@1| ⏰ I квартал
+@1.1| Исследование рынка
+@1.2| Анализ конкурентов
+@2| ⏰ II квартал
+@2.1| Разработка MVP
+@2.2| Тестирование
+@3| ⏰ III квартал
+@3.1| Запуск бета-версии
+@3.2| Сбор обратной связи
+@4| ⏰ IV квартал
+@4.1| Масштабирование
+@4.2| План на следующий год`,
+
+  swot: `@MAIN| 🔍 SWOT анализ
+@1| 💪 Сильные стороны
+@1.1| Уникальная технология
+@1.2| Сильная команда
+@1.3| Узнаваемый бренд
+@2| 🤔 Слабые стороны
+@2.1| Ограниченный бюджет
+@2.2| Нехватка времени
+@3| 🌟 Возможности
+@3.1| Новые рынки
+@3.2| Государственная поддержка
+@4| ⚠️ Угрозы
+@4.1| Высокая конкуренция
+@4.2| Экономическая нестабильность`,
+
+  brainstorm: `@MAIN| 💡 Brainstorm
+@1| 🎯 Проблема
+@1.1| Как привлечь больше клиентов?
+@2| 💭 Идеи
+@2.1| Запустить реферальную программу
+@2.2| Сделать бесплатный пробный период
+@2.3| Усилить присутствие в соцсетях
+@3| 📊 Оценка
+@3.1| MVP за 2 недели
+@3.2| Бюджет: 50 000₽
+@4| ✅ Следующие шаги
+@4.1| Назначить ответственного
+@4.2| Запустить тест`
+};
+
+// Загрузка моих шаблонов из localStorage
+function loadMyTemplates() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch(e) { return []; }
+  }
+  return [];
+}
+
+// Сохранение моих шаблонов в localStorage
+function saveMyTemplates(templates) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(templates));
+}
+
+// Создание уникального ID
+function generateTemplateId() {
+  return Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+}
+
+// Сохранение текущей карты как шаблона
+function saveCurrentAsTemplate() {
+  const name = prompt("📝 Введите название шаблона:", "Мой шаблон " + new Date().toLocaleString());
+  if (!name || name.trim() === "") return;
+  
+  // Собираем данные текущей карты
+  const nodesData = [];
+  state.nodes.forEach(node => {
+    nodesData.push({
+      id: node.id,
+      text: node.text,
+      parentId: node.parentId,
+      children: node.children,
+      x: node.x,
+      y: node.y,
+      color: node.color,
+      width: node.width,
+      height: node.height,
+      isPlainText: node.isPlainText,
+      fontSize: node.fontSize,
+      shape: node.shape
+    });
+  });
+  
+  const template = {
+    id: generateTemplateId(),
+    name: name.trim(),
+    createdAt: new Date().toISOString(),
+    nodes: nodesData,
+    rootId: state.rootId,
+    idCounter: state.idCounter
+  };
+  
+  const myTemplates = loadMyTemplates();
+  myTemplates.push(template);
+  saveMyTemplates(myTemplates);
+  updateTemplateUI();
+  setStatus(`✅ Шаблон "${name.trim()}" сохранён`);
+}
+
+// Загрузка шаблона по данным
+function loadTemplateFromData(templateData) {
+  if (!templateData.nodes || !templateData.nodes.length) {
+    setStatus("❌ Ошибка: шаблон не содержит узлов", true);
+    return;
+  }
+  
+  saveToHistory(); // Сохраняем текущее состояние для Undo
+  
+  clearMapData();
+  
+  // Восстанавливаем узлы
+  const nodeMap = new Map();
+  templateData.nodes.forEach(nodeData => {
+    const node = {
+      ...nodeData,
+      children: nodeData.children || []
+    };
+    state.nodes.set(nodeData.id, node);
+    nodeMap.set(nodeData.id, node);
+  });
+  
+  // Восстанавливаем связи
+  state.nodes.forEach(node => {
+    if (node.parentId && nodeMap.has(node.parentId)) {
+      const parent = state.nodes.get(node.parentId);
+      if (!parent.children.includes(node.id)) {
+        parent.children.push(node.id);
+      }
+    }
+  });
+  
+  state.rootId = templateData.rootId;
+  state.idCounter = templateData.idCounter || state.idCounter;
+  
+  // Центрируем карту
+  setTimeout(() => {
+    const rect = mapShell.getBoundingClientRect();
+    state.panX = rect.width / 2;
+    state.panY = rect.height / 2;
+    state.scale = 1;
+    updateTransform();
+  }, 50);
+  
+  render();
+  setStatus(`✅ Шаблон загружен`);
+}
+
+// Загрузка встроенного шаблона
+function loadBuiltInTemplate(templateKey) {
+  const sourceText = builtInTemplates[templateKey];
+  if (!sourceText) return;
+  
+  saveToHistory(); // Сохраняем текущее состояние для Undo
+  
+  try {
+    const parsed = parseStrictSyntax(sourceText);
+    buildFromStrict(parsed);
+    setStatus(`✅ Шаблон "${templateKey}" загружен`);
+  } catch(e) {
+    setStatus("❌ Ошибка загрузки шаблона: " + e.message, true);
+  }
+}
+
+// Удаление моего шаблона
+function deleteMyTemplate(templateId) {
+  if (confirm("Удалить этот шаблон?")) {
+    const myTemplates = loadMyTemplates();
+    const newTemplates = myTemplates.filter(t => t.id !== templateId);
+    saveMyTemplates(newTemplates);
+    updateTemplateUI();
+    setStatus("🗑️ Шаблон удалён");
+  }
+}
+
+// Обновление всех UI элементов шаблонов
+function updateTemplateUI() {
+  const myTemplates = loadMyTemplates();
+  
+  // Обновляем выпадающий список (мои шаблоны)
+  const myTemplatesList = document.getElementById('myTemplatesList');
+  if (myTemplatesList) {
+    myTemplatesList.innerHTML = '';
+    if (myTemplates.length === 0) {
+      myTemplatesList.innerHTML = '<div style="padding:8px 16px; color:#9C8A79; font-size:12px;">Нет сохранённых шаблонов</div>';
+    } else {
+      myTemplates.forEach(t => {
+        const item = document.createElement('div');
+        item.className = 'template-item';
+        item.innerHTML = `📄 ${t.name}`;
+        item.onclick = () => loadTemplateFromData(t);
+        myTemplatesList.appendChild(item);
+      });
+    }
+  }
+  
+  // Обновляем модальное окно
+  const modalList = document.getElementById('templatesModalMyList');
+  if (modalList) {
+    modalList.innerHTML = '';
+    if (myTemplates.length === 0) {
+      modalList.innerHTML = '<div style="padding:12px; color:#9C8A79; text-align:center;">Нет сохранённых шаблонов</div>';
+    } else {
+      myTemplates.forEach(t => {
+        const div = document.createElement('div');
+        div.className = 'template-modal-item';
+        div.innerHTML = `
+          <div>
+            <span class="template-modal-item-name">📄 ${t.name}</span>
+            <span class="template-modal-item-date">${new Date(t.createdAt).toLocaleDateString()}</span>
+          </div>
+          <div>
+            <button class="template-modal-item-delete" data-delete="${t.id}" title="Удалить">🗑️</button>
+          </div>
+        `;
+        modalList.appendChild(div);
+      });
+      // Добавляем обработчики удаления
+      document.querySelectorAll('[data-delete]').forEach(btn => {
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          deleteMyTemplate(btn.dataset.delete);
+        };
+      });
+    }
+  }
+}
+
+// Переключение выпадающего списка
+let dropdownOpen = false;
+function toggleDropdown() {
+  const dropdown = document.getElementById('templateDropdown');
+  if (dropdown) {
+    dropdownOpen = !dropdownOpen;
+    dropdown.classList.toggle('show', dropdownOpen);
+  }
+}
+
+// Закрытие выпадающего списка при клике вне
+document.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('templateDropdown');
+  const trigger = document.getElementById('loadTemplateBtn');
+  if (dropdown && trigger && !trigger.contains(e.target) && !dropdown.contains(e.target)) {
+    dropdown.classList.remove('show');
+    dropdownOpen = false;
+  }
+});
+
+// Модальное окно
+let modalOpen = false;
+function openTemplatesModal() {
+  const modal = document.getElementById('templatesModal');
+  if (modal) {
+    modalOpen = true;
+    modal.classList.add('open');
+    updateTemplateUI(); // Обновляем при открытии
+  }
+}
+function closeTemplatesModal() {
+  const modal = document.getElementById('templatesModal');
+  if (modal) {
+    modalOpen = false;
+    modal.classList.remove('open');
+  }
+}
+
+// Инициализация обработчиков шаблонов
+function initTemplates() {
+  updateTemplateUI();
+  
+  // Кнопка сохранения
+  const saveBtn = document.getElementById('saveTemplateBtn');
+  if (saveBtn) saveBtn.onclick = () => saveCurrentAsTemplate();
+  
+  // Кнопка загрузки (выпадающий список)
+  const loadBtn = document.getElementById('loadTemplateBtn');
+  if (loadBtn) loadBtn.onclick = (e) => { e.stopPropagation(); toggleDropdown(); };
+  
+  // Кнопка управления (модалка)
+  const manageBtn = document.getElementById('templatesManageBtn');
+  if (manageBtn) manageBtn.onclick = () => openTemplatesModal();
+  
+  // Закрытие модалки
+  const modalClose = document.getElementById('templatesModalClose');
+  if (modalClose) modalClose.onclick = () => closeTemplatesModal();
+  const modalCancel = document.getElementById('templatesModalCancel');
+  if (modalCancel) modalCancel.onclick = () => closeTemplatesModal();
+  
+  // Клик по фону модалки
+  const modal = document.getElementById('templatesModal');
+  if (modal) modal.onclick = (e) => { if (e.target === modal) closeTemplatesModal(); };
+  
+  // Встроенные шаблоны из выпадающего списка
+  document.querySelectorAll('[data-template]').forEach(el => {
+    el.onclick = () => {
+      const key = el.dataset.template;
+      loadBuiltInTemplate(key);
+      dropdownOpen = false;
+      const dropdown = document.getElementById('templateDropdown');
+      if (dropdown) dropdown.classList.remove('show');
+    };
+  });
+  
+  // Загрузка встроенных из модалки
+  document.querySelectorAll('[data-template-load]').forEach(el => {
+    el.onclick = () => {
+      const key = el.dataset.templateLoad;
+      loadBuiltInTemplate(key);
+      closeTemplatesModal();
+    };
+  });
+}
+
+
+// ========== ФИЧА «ЗАМЕТКА» (СТИКЕР) ==========
+
+function addStickerNote() {
+  saveToHistory();
+  
+  const rect = mapShell.getBoundingClientRect();
+  const worldX = (rect.width / 2 - state.panX) / state.scale;
+  const worldY = (rect.height / 2 - state.panY) / state.scale;
+  
+  const id = String(state.idCounter++);
+  state.nodes.set(id, {
+    id: id,
+    text: "📝 Новая заметка\n\nДвойной клик для редактирования...",
+    parentId: null,
+    children: [],
+    x: worldX,
+    y: worldY,
+    color: stickerColorPalette[0],
+    width: 200,
+    height: 150,
+    isPlainText: false,
+    isSticker: true,
+    fontSize: 13,
+    shape: "rect"
+  });
+  
+  setSelection([id], id);
+  render();
+  setTimeout(() => openInlineEditor(id), 100);
+  setStatus("📝 Стикер-заметка добавлена! Выберите цвет на левой панели");
+}
+
+function addStickerButtonToUI() {
+  const container = document.querySelector('.panel .mt-2.flex.gap-2:has(#addPlainTextBtn)');
+  if (container) {
+    const stickerBtn = document.createElement('button');
+    stickerBtn.id = 'addStickerBtn';
+    stickerBtn.className = 'rounded-full bg-[#E8E8E8] px-4 py-2 text-sm text-[#404040] hover:bg-[#D4D4D4] cursor-pointer';
+    stickerBtn.innerHTML = '📌 Заметка';
+    stickerBtn.onclick = () => addStickerNote();
+    container.appendChild(stickerBtn);
+  }
+}
+
+function renderStickerColorPalette() {
+  const stickerBlock = document.getElementById("stickerColorBlock");
+  const stickerPalette = document.getElementById("stickerColorPalette");
+  
+  if (!stickerBlock || !stickerPalette) return;
+  
+  const selectedNode = state.nodes.get(state.primarySelectedId);
+  const isStickerSelected = selectedNode && selectedNode.isSticker && state.selectedIds.size === 1;
+  
+  stickerBlock.style.display = isStickerSelected ? "block" : "none";
+  
+  if (!isStickerSelected) return;
+  
+  stickerPalette.innerHTML = "";
+  
+  stickerColorPalette.forEach(color => {
+    const btn = document.createElement("button");
+    btn.className = "sticker-color-btn";
+    btn.style.backgroundColor = color;
+    btn.title = color;
+    
+    if (selectedNode.color === color) {
+      btn.classList.add("active");
+    }
+    
+    const nodeId = selectedNode.id;
+    
+    btn.addEventListener("click", () => {
+      const currentNode = state.nodes.get(nodeId);
+      if (currentNode && currentNode.isSticker) {
+        saveToHistory();
+        currentNode.color = color;
+        render();
+        setStatus(`🎨 Цвет стикера изменён на ${color}`);
+      }
+    });
+    
+    stickerPalette.appendChild(btn);
+  });
+}
+
+initTemplates();
+addStickerButtonToUI();
 
 </script>
 </body>
